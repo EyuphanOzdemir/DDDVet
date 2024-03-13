@@ -16,10 +16,11 @@ namespace ClinicManagement.Api.MappingProfiles
       CreateMap<CreateClientRequest, Client>();
       CreateMap<UpdateClientRequest, Client>()
           .ForMember(dto => dto.Id, options => options.MapFrom(src => src.ClientId));
-      CreateMap<DeleteClientRequest, Client>();
-      CreateMap<Patient, int>().ConvertUsing(src => src.Id);
+      CreateMap<DeleteClientRequest, Client>()
+          .ConstructUsing(dto => new Client(dto.Id));
       CreateMap<Client, NamedEntity>()
           .ForMember(dest => dest.Name, options => options.MapFrom(src => src.FullName));
+      CreateMap<Client, EntityWithEmail>();
       ;
     }
   }

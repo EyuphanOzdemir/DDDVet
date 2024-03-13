@@ -6,6 +6,7 @@ using AutoMapper;
 using BlazorShared.Models.Patient;
 using ClinicManagement.Core.Aggregates;
 using ClinicManagement.Core.Specifications;
+using ClinicManagement.Core.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using PluralsightDdd.SharedKernel.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
@@ -40,10 +41,13 @@ namespace ClinicManagement.Api.PatientEndpoints
       var client = await _repository.GetBySpecAsync(spec);
       if (client == null) return NotFound();
 
+      var requestedAnimalType = _mapper.Map<AnimalType>(request.AnimalType);
+
       var patientToUpdate = client.Patients.FirstOrDefault(p => p.Id == request.PatientId);
       if (patientToUpdate == null) return NotFound();
 
-      patientToUpdate.Name = request.Name;
+      patientToUpdate.Name = request.PatientName;
+      patientToUpdate.AnimalType = requestedAnimalType;
 
       await _repository.UpdateAsync(client);
 

@@ -25,14 +25,14 @@ namespace ClinicManagement.Api.PatientEndpoints
       _mapper = mapper;
     }
 
-    [HttpDelete("api/patients/{id}")]
+    [HttpDelete("api/patients/client/{clientId}/patient/{patientId}")]
     [SwaggerOperation(
         Summary = "Deletes a Patient",
         Description = "Deletes a Patient",
         OperationId = "patients.delete",
         Tags = new[] { "PatientEndpoints" })
     ]
-    public override async Task<ActionResult<DeletePatientResponse>> HandleAsync([FromRoute] DeletePatientRequest request, CancellationToken cancellationToken)
+    public override async Task<ActionResult<DeletePatientResponse>> HandleAsync([FromRoute]DeletePatientRequest request, CancellationToken cancellationToken)
     {
       var response = new DeletePatientResponse(request.CorrelationId);
 

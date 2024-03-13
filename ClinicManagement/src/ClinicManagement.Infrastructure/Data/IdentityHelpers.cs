@@ -5,8 +5,8 @@ namespace ClinicManagement.Infrastructure.Data
 {
   public static class IdentityHelpers
   {
-    public static Task EnableIdentityInsert<T>(this DbContext context) => SetIdentityInsert<T>(context, enable: true);
-    public static Task DisableIdentityInsert<T>(this DbContext context) => SetIdentityInsert<T>(context, enable: false);
+    private static Task EnableIdentityInsert<T>(this DbContext context) => SetIdentityInsert<T>(context, enable: true);
+    private static Task DisableIdentityInsert<T>(this DbContext context) => SetIdentityInsert<T>(context, enable: false);
 
     private static Task SetIdentityInsert<T>(DbContext context, bool enable)
     {

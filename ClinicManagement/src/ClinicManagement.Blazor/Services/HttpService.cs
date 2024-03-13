@@ -1,7 +1,9 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace ClinicManagement.Blazor.Services
 {
@@ -51,12 +53,39 @@ namespace ClinicManagement.Blazor.Services
       return await FromHttpResponseMessageAsync<T>(result);
     }
 
+    public async Task<T> HttpDeleteAsync<T>(string uri, Dictionary<string, int> pairs)
+        where T : class
+    {
+      var pairString =string.Join("/", pairs.Select(pair => $"{pair.Key}/{pair.Value}"));
+      var requestUri = $"{_apiUrl}{uri}/" + pairString;
+      var result = await _httpClient.DeleteAsync(requestUri);
+      if (!result.IsSuccessStatusCode)
+      {
+        return null;
+      }
+
+      return await FromHttpResponseMessageAsync<T>(result);
+    }
+
+
     public async Task<T> HttpPostAsync<T>(string uri, object dataToSend)
         where T : class
     {
       var content = ToJson(dataToSend);
 
       var result = await _httpClient.PostAsync($"{_apiUrl}{uri}", content);
+      if (!result.IsSuccessStatusCode)
+      {
+        return null;
+      }
+
+      return await FromHttpResponseMessageAsync<T>(result);
+    }
+
+    public async Task<T> HttpPostFormAsync<T>(string uri, MultipartFormDataContent formData)
+        where T : class
+    {
+      var result = await _httpClient.PostAsync($"{_apiUrl}{uri}", formData);
       if (!result.IsSuccessStatusCode)
       {
         return null;

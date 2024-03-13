@@ -1,4 +1,6 @@
-﻿namespace BlazorShared.Models.Client
+﻿using System.Collections.Generic;
+
+namespace BlazorShared.Models.Client
 {
   public class CreateClientRequest : BaseRequest
   {
@@ -8,7 +10,7 @@
     public string PreferredName { get; set; }
     public int? PreferredDoctorId { get; set; }
 
-    //TODO: need to check
+    //TODO-NONEED: need to check: It does not work and also is not needed.
     //public IList<int> Patients { get; set; } = new List<int>();
   }
 }

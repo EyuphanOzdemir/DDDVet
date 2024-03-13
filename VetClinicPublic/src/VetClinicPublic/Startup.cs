@@ -9,6 +9,7 @@ using RabbitMQ.Client.Core.DependencyInjection;
 using VetClinicPublic.Web.Interfaces;
 using VetClinicPublic.Web.Services;
 using MediatR;
+using VetClinicPublic.Interfaces;
 
 namespace VetClinicPublic
 {
@@ -34,6 +35,7 @@ namespace VetClinicPublic
       services.Configure<MailserverConfiguration>(mailserverConfig);
       services.AddSingleton<ISendEmail, SmtpEmailSender>();
       services.AddSingleton<ISendConfirmationEmails, ConfirmationEmailSender>();
+      services.AddSingleton<ISendClientCreatedEmails, ClientCreatedEmailSender>();
 
 
       // configure MediatR

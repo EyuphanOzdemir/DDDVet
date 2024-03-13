@@ -21,8 +21,11 @@ namespace VetClinicPublic
     private IConnection _connection;
     private readonly string _queuein = MessagingConstants.Queues.FDVCP_VETCLINICPUBLIC_IN;
     private readonly string _exchangeName = MessagingConstants.Exchanges.FRONTDESK_VETCLINICPUBLIC_EXCHANGE;
+    private readonly string _queueEntityCreated = "fdvcp-vetclinicpublic-entity-created-in";
+    private readonly string _routingKeyEntityCreated = "entity-changes";
     private readonly ILogger<FrontDeskRabbitMqService> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
+
 
     public FrontDeskRabbitMqService(
       IOptions<RabbitMqConfiguration> rabbitMqOptions,
@@ -66,6 +69,17 @@ namespace VetClinicPublic
         _channel.QueueBind(_queuein, _exchangeName, routingKey: routingKey);
 
         _logger.LogInformation($"*** Listening for messages on {_exchangeName}-{routingKey}...");
+
+        //doctor-created
+        //_channel.QueueDeclare(queue: _queuein,
+        //                      durable: true,
+        //                      exclusive: false,
+        //                      autoDelete: false,
+        //                      arguments: null);
+
+        _channel.QueueBind(_queuein, _exchangeName, routingKey: _routingKeyEntityCreated);
+
+        _logger.LogInformation($"*** Listening for messages on {_exchangeName}-{_routingKeyEntityCreated}...");
       }
       catch(Exception ex)
       {
@@ -74,15 +88,6 @@ namespace VetClinicPublic
         throw;
       }
     }
-
-
-
-
-
-
-
-
-
 
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -96,21 +101,17 @@ namespace VetClinicPublic
                     autoAck: true,
                     consumer: consumer);
 
+      // Create a consumer for the new routing key
+      //var consumerDoctorCreated = new EventingBasicConsumer(_channel);
+      //consumerDoctorCreated.Received += OnMessageReceived;
+
+      //_channel.BasicConsume(queue: _queueEntityCreated,
+      //                      autoAck: true,
+      //                      consumer: consumerDoctorCreated);
+
+
       return Task.CompletedTask;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private async void OnMessageReceived(object model, BasicDeliverEventArgs args)
     {
@@ -119,20 +120,6 @@ namespace VetClinicPublic
 
       await HandleMessage(message);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private async Task HandleMessage(string message)
     {
@@ -156,11 +143,16 @@ namespace VetClinicPublic
           PatientName = root.GetProperty("PatientName").GetString(),
           AppointmentStartDateTime = root.GetProperty("AppointmentStartDateTime").GetDateTime()
         };
-      await mediator.Send(command);
+        await mediator.Send(command);
       }
-      else
+      else if (eventType.GetString() == "Client-Created")
       {
-        throw new Exception($"Unknown message type: {eventType.GetString()}");
+        var command = new SendClientCreatedCommand()
+        {
+          ClientName = root.GetProperty("Entity").GetProperty("FullName").GetString(),
+          ClientEmailAddress = root.GetProperty("Entity").GetProperty("EmailAddress").GetString()
+        };
+        await mediator.Send(command);
       }
     }
 

@@ -8,6 +8,8 @@ namespace ClinicManagement.Core.Aggregates
     public int ClientId { get; set; }
     public string Name { get; set; }
     public string Sex { get; set; }
+
+    public string PictureUrl { get; set; } = string.Empty;
     public AnimalType AnimalType { get; set; }
     public int? PreferredDoctorId { get; set; }
 

@@ -1,10 +1,16 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorShared.Models.Client;
+using ClinicManagement.Api.ApplicationEvents;
+using ClinicManagement.Api.Messaging;
 using ClinicManagement.Core.Aggregates;
+using ClinicManagement.Core.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using PluralsightDdd.SharedKernel.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -16,11 +22,14 @@ namespace ClinicManagement.Api.ClientEndpoints
   {
     private readonly IRepository<Client> _repository;
     private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
 
-    public Create(IRepository<Client> repository, IMapper mapper)
+
+    public Create(IRepository<Client> repository, IMapper mapper, IMediator mediator, IMessagePublisher messagePublisher,  ILogger<Create> logger)
     {
       _repository = repository;
       _mapper = mapper;
+      _mediator = mediator;
     }
 
     [HttpPost("api/clients")]
@@ -40,6 +49,7 @@ namespace ClinicManagement.Api.ClientEndpoints
       var dto = _mapper.Map<ClientDto>(toAdd);
       response.Client = dto;
 
+      await _mediator.Send(new ClientAddedRequest { FullName = dto.FullName, EmailAddress = dto.EmailAddress }, CancellationToken.None);
       return Ok(response);
     }
   }

@@ -1,0 +1,127 @@
+﻿@using ClinicManagement.Blazor.Utilities
+@using Microsoft.AspNetCore.Components.Forms
+@using System.IO
+@using Microsoft.AspNetCore.Http
+@page "/patients"
+
+<h1>Patients</h1>
+
+@if (Clients == null)
+{
+    <Spinner></Spinner>
+}
+else
+{
+	<!-- Display a dropdown list of clients -->
+	<select @onchange="OnClientSelectionChanged">
+		<option value="">Select a client</option>
+		@foreach (var client in Clients)
+		{
+			<option value="@client.FullName">@client.FullName</option>
+		}
+	</select>
+
+	@if (SelectedClient != null)
+	{
+		<div>
+			<p>Selected Client ID: @SelectedClient.ClientId</p>
+		</div>
+		<div class="main-action">
+			<button @onclick="@(() => CreateClick())" @onclick:stopPropagation="true" class="btn btn-primary">
+				<span class="oi oi-plus" aria-hidden="true"></span> Add
+			</button>
+		</div>
+	}
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Name</th>
+				<th>Species</th>
+				<th>Breed</th>
+				<th>Picture</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var patient in Patients)
+			{
+				<tr>
+					<td>
+						@patient.PatientId
+					</td>
+					<td>
+						@if (InEditCreateMode(@patient.PatientId))
+						{
+							<input @bind="ToSave.Name" />
+						}
+						else
+						{
+							@patient.Name
+						}
+					</td>
+					<td>
+						@if (InEditCreateMode(@patient.PatientId))
+						{
+							<input @bind="ToSave.AnimalType.Species" />
+						}
+						else
+						{
+							@(patient.AnimalType?.Species ?? "")
+						}
+					</td>
+					<td>
+						@if (InEditCreateMode(@patient.PatientId))
+						{
+							<input @bind="ToSave.AnimalType.Breed" />
+						}
+						else
+						{
+							@(patient.AnimalType?.Breed ?? "")
+						}
+					</td>
+					<td>
+						@if (string.IsNullOrEmpty(patient.PictureUrl))
+						{
+							<span>No image!</span>
+						}
+						else
+						{
+						  <img src="@Utility.PatientPictureUrl(patient.PictureUrl)" width="100" height="50" alt="No Image" />
+						}
+					</td>
+					<td class="action-buttons">
+						@if (InEditCreateMode(@patient.PatientId))
+						{
+							<button @onclick="@(() => SaveClick())" @onclick:stopPropagation="true" class="btn btn-primary margin-5">
+
+								Save
+							</button>
+							<button @onclick="@(() => CancelClick())" @onclick:stopPropagation="true" class="btn btn-danger margin-5">
+
+								Cancel
+							</button>
+						}
+						else
+						{
+							<button @onclick="@(() => EditClick(patient.PatientId))" @onclick:stopPropagation="true" class="btn btn-primary margin-5">
+								<EditIcon></EditIcon>
+								Edit
+							</button>
+
+							<button @onclick="@(() => DeleteClick(patient.PatientId))" @onclick:stopPropagation="true" class="btn btn-danger margin-5">
+								<DeleteIcon></DeleteIcon>
+								Delete
+							</button>
+
+							<InputFile OnChange="HandleFileChange" multiple />
+							<button @onclick="@(() => UploadPicture(patient.PatientId))">Upload</button>
+							<p>@uploadStatusMessage</p>
+						}
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+

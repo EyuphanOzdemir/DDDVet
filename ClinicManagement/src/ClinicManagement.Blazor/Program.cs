@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using BlazorShared;
 using ClinicManagement.Blazor.Services;
 using ClinicManagement.Blazor.Shared.ToastComponent;
+using ClinicManagement.Blazor.Utilities;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,9 @@ namespace ClinicManagement.Blazor
 
       var baseUrlConfig = new BaseUrlConfiguration();
       builder.Configuration.Bind(BaseUrlConfiguration.CONFIG_NAME, baseUrlConfig);
+      Utility.APIBase = baseUrlConfig.ApiBase;
+      Utility.PatientPictureFolderToGet = baseUrlConfig.PatientPictureFolderToGet;
+      Utility.PatientPictureFolderToUpload = baseUrlConfig.PatientPictureFolderToUpload;
       builder.Services.AddScoped(sp => baseUrlConfig);
 
       // register the HttpClient and HttpService

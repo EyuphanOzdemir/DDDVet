@@ -22,7 +22,7 @@ namespace VetClinicPublic.Web.Controllers
     public ActionResult Confirm(Guid id)
     {
       var appEvent = new AppointmentConfirmLinkClickedIntegrationEvent(id);
-      _messagePublisher.Publish(appEvent);
+      _messagePublisher.PublishAppointmentConfirmedEvent(appEvent);
       return View();
     }
   }

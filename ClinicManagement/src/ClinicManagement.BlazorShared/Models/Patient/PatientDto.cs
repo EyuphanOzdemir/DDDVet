@@ -1,4 +1,6 @@
-﻿namespace BlazorShared.Models.Patient
+﻿using ClinicManagement.BlazorShared.Models.Patient;
+
+namespace BlazorShared.Models.Patient
 {
   public class PatientDto
   {
@@ -7,6 +9,12 @@
     public string Name { get; set; }
     public string ClientName { get; set; }
     public string ImageData { get; set; }
+
+    public string PictureUrl { get; set; }
     public int? PreferredDoctorId { get; set; }
+
+    public string PreferredDoctorName { get;}
+
+    public AnimalTypeDto AnimalType { get; set; }
   }
 }

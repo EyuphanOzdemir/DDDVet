@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
@@ -33,10 +34,15 @@ namespace ClinicManagement.Api.ClientEndpoints
     public override async Task<ActionResult<DeleteClientResponse>> HandleAsync([FromRoute] DeleteClientRequest request, CancellationToken cancellationToken)
     {
       var response = new DeleteClientResponse(request.CorrelationId);
-
-      var toDelete = _mapper.Map<Client>(request);
-      await _repository.DeleteAsync(toDelete);
-
+      try
+      {
+        var toDelete = _mapper.Map<Client>(request);
+        await _repository.DeleteAsync(toDelete);
+      }
+      catch(Exception ex)
+      {
+        return BadRequest(ex.Message);
+      }
       return Ok(response);
     }
   }

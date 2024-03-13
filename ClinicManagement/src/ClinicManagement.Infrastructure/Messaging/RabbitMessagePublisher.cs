@@ -28,7 +28,7 @@ namespace ClinicManagement.Infrastructure.Messaging
       object message = (object)applicationEvent;
       try
       {
-        string exchangeName = MessagingConstants.Exchanges.FRONTDESK_CLINICMANAGEMENT_EXCHANGE;
+        string exchangeName =MessagingConstants.Exchanges.FRONTDESK_VETCLINICPUBLIC_EXCHANGE;
         channel.ExchangeDeclare(exchangeName, "direct", true, false, null);
 
         var sendBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));

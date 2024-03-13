@@ -5,6 +5,7 @@ namespace ClinicManagement.Core.Aggregates
 {
   public class Doctor : BaseEntity<int>, IAggregateRoot
   {
+    
     public string Name { get; set; }
 
     public Doctor(int id, string name)

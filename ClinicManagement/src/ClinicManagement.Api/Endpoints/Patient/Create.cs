@@ -40,12 +40,15 @@ namespace ClinicManagement.Api.PatientEndpoints
       var client = await _repository.GetBySpecAsync(spec);
       if (client == null) return NotFound();
 
+      var requestedAnimalType =_mapper.Map<AnimalType>(request.AnimalType);
+
       // right now we only add huskies
       var newPatient = new Patient
       {
         ClientId = client.Id,
         Name = request.PatientName,
-        AnimalType = new AnimalType("Dog", "Husky")
+        //AnimalType = new AnimalType("Dog", "Husky")
+        AnimalType = requestedAnimalType
       };
       client.Patients.Add(newPatient);
 

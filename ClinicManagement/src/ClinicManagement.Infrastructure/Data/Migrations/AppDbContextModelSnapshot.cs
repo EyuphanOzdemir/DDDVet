@@ -95,6 +95,9 @@ namespace ClinicManagement.Infrastructure.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PictureUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("PreferredDoctorId")
                         .HasColumnType("int");
 
